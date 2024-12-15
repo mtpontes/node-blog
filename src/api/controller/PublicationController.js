@@ -1,4 +1,4 @@
-const PublicationService = require('../../service/PublicationService');
+const PublicationService = require('../../business/service/PublicationService');
 
 class PublicationController {
 
@@ -11,14 +11,13 @@ class PublicationController {
 
   static async get(request, response) {
     const { id } = request.params;
-    const commentLimit = parseInt(request.query.commentLimit) || 2;
-    const result = await PublicationService.getPublicationById(id, commentLimit);
+    const result = await PublicationService.getPublicationById(id);
     response.status(200).send(result);
   }
 
   static async getAll(request, response) {
-    const { userName, userEmail, fromCreatedAt } = request.query;
-    const results = await PublicationService.getAllPublications(userName, userEmail, new Date(fromCreatedAt));
+    const { userEmail, fromCreatedAt } = request.query;
+    const results = await PublicationService.getAllPublications(userEmail, fromCreatedAt);
     response.status(200).send(results);
   }
 
@@ -29,7 +28,7 @@ class PublicationController {
   }
 
   static async delete(request, response) {
-    const { id } = request.body;
+    const { id } = request.params;
     await PublicationService.deletePublication(id);
     response.status(204).send();
   }

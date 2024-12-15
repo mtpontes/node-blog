@@ -1,12 +1,11 @@
-const { PublicationModel, CommentModel, UserModel } = require('../models');
-const Publication = require('../domain/Publication');
+const { PublicationModel, UserModel } = require('../../infra/models');
+const Publication = require('../../domain/Publication');
 const Sequelize = require('sequelize');
 
 
 class PublicationService {
 
   static async createPublication(userId, data) {
-    console.log(`log: ${userId}`);
     const domain = new Publication(null, data.description, data.imageLink, userId);
     return await PublicationModel.create(domain.toLiteral());
   }
@@ -15,21 +14,22 @@ class PublicationService {
     return await PublicationModel.findByPk(publicationId);
   }
 
-  static async getAllPublications(userName, userEmail, fromCreatedAt) {
+  static async getAllPublications(userEmail, fromCreatedAt) {
     const wheres = {};
-    const associationWhere = {};
-    if (fromCreatedAt) wheres.createdAt = { [Sequelize.Op.gte]: fromCreatedAt };
-    if (userName) associationWhere.name = { [Sequelize.Op.like]: userName };
-    if (userEmail) associationWhere.email = userEmail;
-
-    return await PublicationModel.findAll({ 
-      where: wheres,
-      include: { 
-        model: UserModel, 
-        as: 'user', 
-        where: associationWhere 
-      },
-    });
+    const joinWhere = {};
+    if (fromCreatedAt && !isNaN(new Date(fromCreatedAt).getHours()))
+      wheres.createdAt = { [Sequelize.Op.gte]: fromCreatedAt };
+    if (userEmail) {
+      joinWhere.email = userEmail;
+      const joinUserTable = {
+        model: UserModel,
+        as: 'user',
+        attributes: ['email'],
+        where: joinWhere
+      };
+      return PublicationModel.findAll({ where: wheres, include: joinUserTable });
+    }
+    return PublicationModel.findAll({ where: wheres });
   }
 
   static async updatePublication(id, data) {
@@ -37,7 +37,7 @@ class PublicationService {
     const domain = Publication.fromLiteral(model.get());
     domain.updateDescription(data.description);
 
-    model.description = domain.description;
+    model.set(domain.toLiteral());
     return await model.save();
   }
 

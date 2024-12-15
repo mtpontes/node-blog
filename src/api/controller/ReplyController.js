@@ -1,4 +1,4 @@
-const ReplyService = require('../../service/ReplyService');
+const ReplyService = require('../../business/service/ReplyService');
 
 class CommentController {
 
@@ -8,14 +8,9 @@ class CommentController {
     response.status(201).send(result);
   }
 
-  static async get(request, response) {
-    const { id } = request.params;
-    const result = await ReplyService.getReplyById(id);
-    response.status(200).send(result);
-  }
-
   static async getAll(request, response) {
-    const results = await ReplyService.getAllReplies();
+    const { id } = request.params;
+    const results = await ReplyService.getAllReplies(id);
     response.status(200).send(results);
   }
 

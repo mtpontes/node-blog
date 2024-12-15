@@ -7,43 +7,47 @@ class PublicationValidator {
         .isInt()
         .notEmpty()
         .withMessage('Invalid userId: Deve ser um número inteiro válido'),
-  
-    description: () => 
+
+    description: () =>
       body('description')
         .isString()
         .withMessage('Invalid description: Deve ser uma String válida'),
 
-    descriptionNotEmpty: () => 
+    descriptionNotEmpty: () =>
       body('description')
         .isString()
         .notEmpty()
         .withMessage('Invalid description: Deve ser uma String válida'),
-    
-    imageLink: () => 
+
+    imageLink: () =>
       body('imageLink')
         .isString()
         .withMessage('Invalid imageLink: Deve ser uma String válida'),
 
     requireDescriptionOrImageLink: (request, response, next) => {
       const { description, imageLink } = request.body;
-      if ((!description || description.trim() === '') && (!imageLink || imageLink.trim() === '')) 
+      if ((!description || description.trim() === '') && (!imageLink || imageLink.trim() === ''))
         return response.status(400).send({ error: 'É obrigatório fornecer um description ou imageLink valido.' });
       next();
     }
   };
-  
+
   static Param = {
-    userId: () => 
+    id: () =>
+      param('id')
+        .notEmpty()
+        .withMessage('Invalid userId: Deve ser um número inteiro válido'),
+    userId: () =>
       param('userId')
-        .isInt()
         .notEmpty()
         .withMessage('Invalid userId: Deve ser um número inteiro válido'),
   };
 
   static Query = {
-    createdAt: () => 
+    createdAt: () =>
       param('fromCreatedAt')
-        .toDate()
+        .optional()
+        .notEmpty()
   };
 
   static handlerValidationErrors(req, res, next) {

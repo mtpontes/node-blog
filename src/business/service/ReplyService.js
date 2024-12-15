@@ -1,21 +1,15 @@
-const { ReplyModel, CommentModel } = require('../models');
-const Reply = require('../domain/Reply');
+const { ReplyModel } = require('../../infra/models');
+const Reply = require('../../domain/Reply');
 
 class ReplyService {
 
   static async createReply(userId, publicationId, data) {
     const domain = new Reply(data.text, userId, publicationId);
-    const model = await ReplyModel.create(domain.toLiteral());
-    return model.get();
+    return await ReplyModel.create(domain.toLiteral());
   }
 
-  static async getReplyById(publicationId) {
-    return await ReplyModel.findByPk(publicationId)
-      .then(data => data.get());
-  }
-
-  static async getAllReplies() {
-    return await ReplyModel.findAll();
+  static async getAllReplies(commentId) {
+    return await ReplyModel.findAll({ where: { commentId: commentId } });
   }
 
   static async updateReply(id, text) {
@@ -23,8 +17,7 @@ class ReplyService {
     const domain = Reply.fromLiteral(model.get());
     domain.updateText(text);
 
-    model.text = domain.text;
-    model.edited = domain.edited;
+    model.set(domain.toLiteral());
     return await model.save();
   }
 

@@ -1,4 +1,5 @@
 const PublicationValidator = require('./PublicationValidator');
+const runValidations = require('../runValidations');
 
 class PublicationValidatorGroups {
 
@@ -7,36 +8,36 @@ class PublicationValidatorGroups {
       PublicationValidator.Param.userId(),
       PublicationValidator.Body.description(),
       PublicationValidator.Body.imageLink(),
-      PublicationValidator.handlerValidationErrors,
-      PublicationValidator.Body.requireDescriptionOrImageLink
+      PublicationValidator.Body.requireDescriptionOrImageLink,
+      runValidations
     ];
   }
 
   static rulesOperationGet() {
     return [
-      PublicationValidator.Param.userId(),
-      PublicationValidator.handlerValidationErrors,
+      PublicationValidator.Param.id(),
+      runValidations,
     ];
   }
 
   static rulesOperationGetAll() {
     return [
       PublicationValidator.Query.createdAt(),
-      PublicationValidator.handlerValidationErrors,
+      runValidations,
     ];
   }
 
   static rulesOperationUpdate() {
     return [
-      PublicationValidator.Param.userId(),
-      PublicationValidator.handlerValidationErrors,
+      PublicationValidator.Param.id(),
+      runValidations,
     ];
   }
 
   static rulesOperationDelete() {
     return [
-      PublicationValidator.Param.userId(),
-      PublicationValidator.handlerValidationErrors,
+      PublicationValidator.Param.id(),
+      runValidations,
     ];
   }
 }
