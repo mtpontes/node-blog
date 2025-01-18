@@ -1,16 +1,21 @@
 class User {
   constructor(name, email, password, role) {
-    this.name = name;
-    this.email = email;
-    this.password = password;
-    this.role = role;
+    this.name = this.assertAttribute(name, 'name');
+    this.email = this.assertAttribute(email, 'email');
+    this.password = this.assertAttribute(password, 'password');
+    this.role = this.assertAttribute(role, 'role');
   }
 
   updateName(name) {
-    if (!name) throw new Error('Name não pode ser nulo');
-    if (!(typeof name == 'string')) throw new Error('Name deve ser uma String');
-    if (name.trim() === '') throw new Error('Name deve ser uma string válida');
+    const isValid = this.assertAttribute(name, 'name').trim() !== '';
+    if (!isValid) throw new Error('Name cannot be empty');
+
     this.name = name;
+  }
+
+  assertAttribute(value, attributeName) {
+    if (!value) throw new Error(`${attributeName} não pode ser nulo`);
+    return value;
   }
 
   toLiteral() {
@@ -20,21 +25,6 @@ class User {
   static fromLiteral(data) {
     return Object.assign(new User(null, null, null, null), data);
   }
-  // static fromLiteral(data) {
-  //   const user = new User(
-  //     data.name,
-  //     data.email,
-  //     data.password,
-  //     data.role || null
-  //   );
-  //   user.id = data.id || null;
-  //   user.createdAt = data.createdAt || null;
-  //   user.modifiedAt = data.modifiedAt || null;
-  //   user.comments = data.comments || null;
-  //   user.publication = data.publications || null;
-  //   user.replies = data.replies || null;
-  //   return user;
-  // }
 }
 
 module.exports = User;
