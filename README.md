@@ -9,3 +9,4 @@
 - [ ] Implementar paginação
 - [ ] Autorização e autenticação
 - [ ] Tratar erros e respostas dinâmicas nos controllers
+- [ ] Indexar tags para consultas
