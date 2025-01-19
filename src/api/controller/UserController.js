@@ -1,4 +1,5 @@
 const UserService = require('../../business/service/UserService');
+const Pagination = require('../Pagination');
 
 class UserController {
 
@@ -14,8 +15,10 @@ class UserController {
   }
 
   static async getAll(request, response) {
-    const { name, email, role } = request.query;
-    const result = await UserService.getAllUsers(name, email, role);
+    const { name, email, role, page = 1, limit = 10 } = request.query;
+    const pagination = new Pagination(page, limit);
+
+    const result = await UserService.getAllUsers({ name, email, role }, pagination);
     response.status(200).send(result);
   }
 

@@ -12,13 +12,19 @@ class UserService {
     return await UserModel.findByPk(id);
   }
 
-  static async getAllUsers(name, email, role) {
+  static async getAllUsers(queryParams, pagination) {
     const wheres = {};
-    if (name) wheres.name = { [Op.like]: `%${name}%` };
-    if (email) wheres.email = { [Op.like]: `%${email}%` };
-    if (role) wheres.role = role;
+    if (queryParams.name) wheres.name = { [Op.like]: `%${queryParams.name}%` };
+    if (queryParams.email) wheres.email = { [Op.like]: `%${queryParams.email}%` };
+    if (queryParams.role) wheres.role = queryParams.role;
 
-    return await UserModel.findAll({ where: wheres });
+    const result = await UserModel.findAndCountAll({
+      where: wheres,
+      offset: pagination.offset,
+      limit: pagination.limit
+    });
+
+    return pagination.paginatedReturn(result);
   }
 
   static async updateUserData(id, body) {

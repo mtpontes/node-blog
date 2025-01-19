@@ -1,4 +1,5 @@
 const ReplyService = require('../../business/service/ReplyService');
+const Pagination = require('../Pagination');
 
 class CommentController {
 
@@ -9,8 +10,11 @@ class CommentController {
   }
 
   static async getAll(request, response) {
-    const { id } = request.params;
-    const results = await ReplyService.getAllReplies(id);
+    const { id: commentId } = request.params;
+    const { page = 1, limit = 10 } = request.query;
+    const pagination = new Pagination(page, limit);
+
+    const results = await ReplyService.getAllReplies(commentId, pagination);
     response.status(200).send(results);
   }
 

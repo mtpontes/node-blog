@@ -8,8 +8,13 @@ class CommentService {
     return await CommentModel.create(domain.toLiteral());
   }
 
-  static async getCommentsByPublication(publicationId) {
-    return await CommentModel.findAll({ where: { publicationId: publicationId } });
+  static async getCommentsByPublication(publicationId, pagination) {
+    const result = await CommentModel.findAndCountAll({
+      where: { publicationId: publicationId },
+      limit: pagination.limit,
+      offset: pagination.offset
+    });
+    return pagination.paginatedReturn(result);
   }
 
   static async updateComment(id, text) {

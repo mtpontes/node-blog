@@ -14,22 +14,27 @@ class PublicationService {
     return await PublicationModel.findByPk(publicationId);
   }
 
-  static async getAllPublications(userEmail, fromCreatedAt) {
+  static async getAllPublications(params, pagination) {
     const wheres = {};
-    const joinWhere = {};
-    if (fromCreatedAt && !isNaN(new Date(fromCreatedAt).getHours()))
-      wheres.createdAt = { [Sequelize.Op.gte]: fromCreatedAt };
-    if (userEmail) {
-      joinWhere.email = userEmail;
-      const joinUserTable = {
+    if (params.fromCreatedAt && !isNaN(new Date(params.fromCreatedAt).getHours()))
+      wheres.createdAt = { [Sequelize.Op.gte]: params.fromCreatedAt };
+    if (params.userEmail) {
+      const joinUserTableWhereEmail = {
         model: UserModel,
         as: 'user',
         attributes: ['email'],
-        where: joinWhere
+        where: { email: params.userEmail }
       };
-      return PublicationModel.findAll({ where: wheres, include: joinUserTable });
+      const result = await PublicationModel.findAndCountAll({
+        where: wheres,
+        include: joinUserTableWhereEmail,
+        limit: pagination.limit,
+        offset: pagination.offset
+      });
+      return pagination.paginatedReturn(result);
     }
-    return PublicationModel.findAll({ where: wheres });
+    const result = await PublicationModel.findAndCountAll({ where: wheres });
+    return pagination.paginatedReturn(result);
   }
 
   static async updatePublication(id, data) {

@@ -8,8 +8,14 @@ class ReplyService {
     return await ReplyModel.create(domain.toLiteral());
   }
 
-  static async getAllReplies(commentId) {
-    return await ReplyModel.findAll({ where: { commentId: commentId } });
+  static async getAllReplies(commentId, pagination) {
+    const result = await ReplyModel.findAndCountAll({
+      where: { commentId: commentId },
+      limit: pagination.limit,
+      offset: pagination.offset
+    });
+
+    return pagination.paginatedReturn(result);
   }
 
   static async updateReply(id, text) {

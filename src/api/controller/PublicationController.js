@@ -1,4 +1,5 @@
 const PublicationService = require('../../business/service/PublicationService');
+const Pagination = require('../Pagination');
 
 class PublicationController {
 
@@ -16,8 +17,12 @@ class PublicationController {
   }
 
   static async getAll(request, response) {
-    const { userEmail, fromCreatedAt } = request.query;
-    const results = await PublicationService.getAllPublications(userEmail, fromCreatedAt);
+    const { userEmail, fromCreatedAt, page, limit } = request.query;
+    const pagination = new Pagination(page, limit);
+    const results = await PublicationService.getAllPublications(
+      { userEmail, fromCreatedAt },
+      pagination
+    );
     response.status(200).send(results);
   }
 
