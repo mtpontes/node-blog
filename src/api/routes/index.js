@@ -10,6 +10,6 @@ module.exports = (app) => {
     userRoutes,
     publicationRoutes,
     commentRoutes,
-    replyRoutes
+    replyRoutes,
   );
 };

@@ -7,5 +7,5 @@
 - [x] Implementar validadores de body, query, param
 - [x] Criar consultas parametrizadas
 - [x] Implementar paginação
-- [ ] Tratar erros e respostas dinâmicas nos controllers
+- [x] Tratar erros e respostas dinâmicas nos controllers
 - [ ] Autorização e autenticação

@@ -135,3 +135,5 @@ dist
 # drafts
 index*.js
 !index.js
+/.vscode
+settings.js
